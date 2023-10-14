@@ -1,7 +1,48 @@
 import Head from "next/head";
-import { Container, Heading } from "@chakra-ui/react";
+import {
+   Container,
+   Heading,
+   Table,
+   Tbody,
+   Td,
+   Thead,
+   Tr,
+} from "@chakra-ui/react";
+import { axiosInstance } from "@/libs/axios";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+   const [products, setProducts] = useState([]); //menyimpan data response DATA
+
+   const fetchProducts = async () => {
+      try {
+         const productResponse = await axiosInstance.get("/products");
+         setProducts(productResponse.data);
+      } catch (error) {
+         console.log(error);
+      }
+   };
+
+   // menampilkan data hasil dari fetchProducts
+   const renderProducts = () => {
+      return products.map((product) => {
+         return (
+            <Tr key={product.id}>
+               <Td>{product.id}</Td>
+               <Td>{product.name}</Td>
+               <Td>{product.price}</Td>
+               <Td>{product.description}</Td>
+               <Td>{product.image}</Td>
+            </Tr>
+         );
+      });
+   };
+
+   // hook
+   useEffect(() => {
+      fetchProducts();
+   }, []);
+
    return (
       <>
          <Head>
@@ -15,7 +56,19 @@ export default function Home() {
          </Head>
          <main>
             <Container maxW="1200px">
-               <Heading>Hello Dek</Heading>
+               <Heading>Read Data</Heading>
+               <Table>
+                  <Thead>
+                     <Tr>
+                        <Td>ID</Td>
+                        <Td>Name</Td>
+                        <Td>Price</Td>
+                        <Td>Description</Td>
+                        <Td>Image</Td>
+                     </Tr>
+                  </Thead>
+                  <Tbody>{renderProducts()}</Tbody>
+               </Table>
             </Container>
          </main>
       </>
