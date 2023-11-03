@@ -7,21 +7,13 @@ import {
    Td,
    Thead,
    Tr,
+   Spinner,
 } from "@chakra-ui/react";
-import { axiosInstance } from "@/libs/axios";
-import { useEffect, useState } from "react";
+
+import { useProducts } from "@/features/product/useProducts";
 
 export default function Home() {
-   const [products, setProducts] = useState([]); //menyimpan data response DATA
-
-   const fetchProducts = async () => {
-      try {
-         const productResponse = await axiosInstance.get("/products");
-         setProducts(productResponse.data);
-      } catch (error) {
-         console.log(error);
-      }
-   };
+   const { data: products, isLoading } = useProducts();
 
    // menampilkan data hasil dari fetchProducts
    const renderProducts = () => {
@@ -38,11 +30,6 @@ export default function Home() {
       });
    };
 
-   // hook
-   useEffect(() => {
-      fetchProducts();
-   }, []);
-
    return (
       <>
          <Head>
@@ -55,7 +42,7 @@ export default function Home() {
             <link rel="icon" href="/favicon.ico" />
          </Head>
          <main>
-            <Container maxW="1200px">
+            <Container maxW="1200px" minH="100vh">
                <Heading>Read Data</Heading>
                <Table>
                   <Thead>
@@ -69,6 +56,18 @@ export default function Home() {
                   </Thead>
                   <Tbody>{renderProducts()}</Tbody>
                </Table>
+               {isLoading ? (
+                  <Spinner
+                     pos="absolute"
+                     left="48%"
+                     top="30%"
+                     thickness="5px"
+                     speed="0.65s"
+                     emptyColor="gray.200"
+                     color="blue.700"
+                     size="xl"
+                  />
+               ) : null}
             </Container>
          </main>
       </>
